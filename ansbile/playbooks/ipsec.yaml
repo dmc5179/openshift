@@ -1,6 +1,5 @@
 ---
 - name: Configure cluster to use IPSec
   hosts: "{{ hosts_to_apply }}"
-  user: root
   roles:
     - ipsec
