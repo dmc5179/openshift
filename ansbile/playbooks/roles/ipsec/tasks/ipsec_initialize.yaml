@@ -34,6 +34,42 @@
     line: 172.31.0.0/16
     insertafter: EOF
 
+- firewalld:
+    port: 50/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- firewalld:
+    port: 50/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- firewalld:
+    port: 51/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- firewalld:
+    port: 51/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- firewalld:
+    port: 500/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- firewalld:
+    port: 500/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
 - name: Enable IPSec Service
   systemd:
     name: ipsec.service
