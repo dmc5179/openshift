@@ -1,0 +1,16 @@
+---
+
+- name: Get Common Name
+  shell: openssl x509 -in /etc/origin/master/cert.pem -subject -noout | sed -n 's/.*CN=\(.*\)/\1/p'
+  register: ipsec_cn
+
+- name: Get Common Name
+  shell: openssl pkcs12 -export -in /etc/origin/master/cert.pem -inkey /etc/origin/master/privkey.pem -certfile /etc/origin/master/ca.crt -passout pass: -out /root/certs.p12
+#
+#ipsec initnss
+#pk12util -i /root/certs.p12 -d sql:/etc/ipsec.d -W ""
+#rm -f /root/certs.p12
+
+
+
+

@@ -10,13 +10,13 @@
     name: libreswan
     state: latest
 
-- name: Install mlocate
-  yum:
-    name: mlocate
-    state: latest
-
-- name: Updatedb
-  shell: updatedb
+#- name: Install mlocate
+#  yum:
+#    name: mlocate
+#    state: latest
+#
+#- name: Updatedb
+#  shell: updatedb
 
 
 #openssl x509 -in /etc/origin/master/cert.pem -subject -noout | sed -n 's/.*CN=\(.*\)/\1/p'
