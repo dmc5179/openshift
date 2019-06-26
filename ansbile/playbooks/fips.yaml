@@ -1,0 +1,6 @@
+---
+- name: Configure hosts to use fips mode
+  hosts: "{{ hosts_to_apply }}"
+  user: root
+  roles:
+    - fips
