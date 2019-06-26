@@ -6,9 +6,37 @@
 - name: Import Certificate
   shell: pk12util -i /root/certs.p12 -d sql:/etc/ipsec.d -W ""
 
-#- name: Remove Certificate
-#rm -f /root/certs.p12
+- name: Remove Certificate
+  file:
+  path: /root/certs.p12
+  state: absent
 
+- name: Configure Opportunistic Group
+  template:
+    src: openshift-cluster.conf.j2
+    dest: /etc/ipsec.d/openshift-cluster.conf
 
+- name: Enable external cluster traffic
+  lineinfile:
+    path: /etc/ipsec.d/policies/clear
+    line: 172.31.0.0/32
+    insertafter: EOF
 
+- name: Don't IPsec encrypt any incoming ssh
+  lineinfile:
+    path: /etc/ipsec.d/policies/clear
+    line: 0.0.0.0/0  tcp  22  0
+    insertafter: EOF
+
+- name: Encrypt POD Traffic
+  lineinfile:
+    path: /etc/ipsec.d/policies/private
+    line: 172.31.0.0/16
+    insertafter: EOF
+
+- name: Enable IPSec Service
+  systemd:
+    name: ipsec.service
+    state: started
+    enabled: yes
 
