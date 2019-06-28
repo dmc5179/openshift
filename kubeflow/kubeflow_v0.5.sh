@@ -14,49 +14,36 @@ oc adm policy add-scc-to-user anyuid -z builder -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z centraldashboard -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z default -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z deployer -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z jupyter -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z jupyter-notebook -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z jupyter-web-app -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z katib-ui -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z meta-controller-service -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z metrics-collector -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z ml-pipeline -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-persistenceagent -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z ml-pipeline-scheduledworkflow -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-ui -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z ml-pipeline-viewer-crd-service-account -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z notebook-controller -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z pipeline-runner -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z profiles -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z pytorch-operator -n${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z spartakus -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z studyjob-controller -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z tf-job-dashboard -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z tf-job-operator -n${NAMESPACE}
 oc adm policy add-scc-to-user anyuid -z vizier-core -n${NAMESPACE}
 
 
-
-###### Possible commands
-
-export KFAPP=kubeflow
-kfctl init ${KFAPP} --platform 'none'
-kfctl help init
-mkdir kubeflow
-kfctl init ${KFAPP} --platform 'openshift' -V
-rm -rf kubeflow/
-mkdir kubeflow
-kfctl init ${KFAPP} --verbose
-ls -l kubeflow/
-cd kubeflow/
-vim app.yaml 
-kfctl generate all -V
-oc get sa
-kfctl apply all -V
-which ks
-rpm -qf /usr/local/bin/ks 
-vim app.yaml 
-kfctl apply all -V
-grep -i pvc app.yaml 
-grep -i mysql-pv-claim app.yaml 
-find . -type f -exec grep -Hi mysql-pv-claim '{}' ';'
-vim ./ks_app/vendor/kubeflow/modeldb/modeldb.libsonnet
-vim ./ks_app/vendor/kubeflow/pipeline/storage.libsonnet 
-oc expose svc/centraldashboard
-oc expose svc/jupyter-web-app
-oc expose svc/katib-ui
+export KUBEFLOW_SRC=kubeflow
+export KUBEFLOW_TAG=v0.5-branch
+mkdir ${KUBEFLOW_SRC}
+cd ${KUBEFLOW_SRC}
+curl https://raw.githubusercontent.com/kubeflow/kubeflow/${KUBEFLOW_TAG}/scripts/download.sh | bash
+export KFAPP=openshift
+scripts/kfctl.sh init ${KFAPP} --platform none
+../scripts/kfctl.sh generate k8s
+export NAMESPACE=kubeflow
+../scripts/kfctl.sh apply k8s
 
