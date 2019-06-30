@@ -47,3 +47,44 @@ scripts/kfctl.sh init ${KFAPP} --platform none
 export NAMESPACE=kubeflow
 ../scripts/kfctl.sh apply k8s
 
+
+###################
+# To enable the argo-ui change the argo-ui deployment
+# Then create a route to it once the pod restart
+# - env:
+#            - name: ARGO_NAMESPACE
+#              valueFrom:
+#                fieldRef:
+#                  apiVersion: v1
+#                  fieldPath: metadata.namespace
+#            - name: IN_CLUSTER
+#              value: 'true'
+#            - name: ENABLE_WEB_CONSOLE  # Change starts here
+#              value: 'false'            #
+#            - name: BASE_HREF           #
+#              value: /                  # Change ends here
+###################
+
+
+
+# Need RBAC roles for Argo to work
+oc apply -f argo-role.yaml -n kubeflow
+
+#It is also necessary to give additional (privileged) permissions to an argo role using the following command:
+oc adm policy add-scc-to-user privileged -z argo -nkubeflow
+
+# Download the argo client
+wget https://github.com/argoproj/argo/releases/download/v2.3.0/argo-linux-amd64
+
+
+# Download the minio client
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+
+# Kubeflow is typically tested used GKE, which is significantly less strict compared to OpenShift
+oc apply -f tfjobs-role.yaml -n kubeflow
+
+# Kubeflow is typically tested used GKE, which is significantly less strict compared to OpenShift
+oc apply -f studyjobs-role.yaml -n kubeflow
+
+oc adm policy add-scc-to-user privileged -nkubeflow -z pipeline-runner
+
