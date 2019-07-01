@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapd-aggr
+  labels:
+    app: mapd-aggr
+spec:
+  ports:
+    - port: 6274
+      name: mapd-aggr-a
+      protocol: TCP
+      targetPort: 6274
+    - port: 6278
+      name: mapd-aggr-b
+      protocol: TCP
+      targetPort: 6278
+  selector:
+    app: mapd-aggr
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mapd-aggr
+  labels:
+    app: mapd-aggr
+spec:
+  selector:
+    matchLabels:
+      app: mapd-aggr
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mapd-aggr
+    spec:
+      containers:
+      - image: docker.io/omnisci/omnisci-ee-cuda:latest
+        imagePullPolicy: IfNotPresent
+        name: omnisci-ee-cuda
+        env:
+        - name: NVIDIA_DRIVER_CAPABILITES
+          value: compute,utility
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        ports:
+        - containerPort: 6274
+          name: mapd-aggr-a
+        - containerPort: 6278
+          name: mapd-aggr-b
+        resources:
+        limits:
+          nvidia.com/gpu: 1 # requesting 1 GPU
+        volumeMounts:
+        - name: mapd-aggr-persistent-storage
+          mountPath: /omnisci-storage
+      volumes:
+      - name: mapd-aggr-persistent-storage
+        persistentVolumeClaim:
+          claimName: ssd-mapd-aggr
+      hostname: mapd-aggr
