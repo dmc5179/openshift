@@ -1,0 +1,11 @@
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "mapd-aggr"
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "450Gi"
+  volumeName: "local-pv-8f5c0c87"

@@ -1,0 +1,11 @@
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "mapd-immerse"
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "450Gi"
+  volumeName: "local-pv-c6b65350"
