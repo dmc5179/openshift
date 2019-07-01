@@ -35,6 +35,7 @@ spec:
       - image: docker.io/omnisci/omnisci-ee-cuda:latest
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
+        command: ["/scripts/start_sds.sh"]
         env:
         - name: NVIDIA_DRIVER_CAPABILITES
           value: compute,utility
@@ -49,8 +50,14 @@ spec:
         volumeMounts:
         - name: mapd-sds-persistent-storage
           mountPath: /omnisci-storage
+        - name: wrapper
+          mountPath: /scripts
       volumes:
       - name: mapd-sds-persistent-storage
         persistentVolumeClaim:
           claimName: ssd-mapd-sds
+      - name: wrapper
+        configMap:
+          name: mapd-cm-sds
+          defaultMode: 0755
       hostname: omnisci-sds
