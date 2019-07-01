@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+
+  sds:
+    image: ${OMNISCI_IMAGE}
+    # ports:
+    #   - "6277:6277"
+    volumes:
+      - v-sds:/omnisci-storage
+    environment:
+      # OMNISCI_ROLE: SDS
+    command: omnisci-starter sds
+
+  leaf1:
+    image: ${OMNISCI_IMAGE}
+    volumes:
+      - v-leaf1:/omnisci-storage
+    environment:
+      # OMNISCI_ROLE: LEAF
+      OMNISCI_SDS: "sds:6277"
+      OMNISCI_LICENSE: "$OMNISCI_LICENSE"
+    command: omnisci-starter leaf
+
+  leaf2:
+    image: ${OMNISCI_IMAGE}
+    volumes:
+      - v-leaf2:/omnisci-storage
+    environment:
+      # OMNISCI_ROLE: LEAF
+      OMNISCI_SDS: "sds:6277"
+      OMNISCI_LICENSE: "$OMNISCI_LICENSE"
+    command: omnisci-starter leaf
+
+  aggr:
+    image: ${OMNISCI_IMAGE}
+    ports:
+      - "6274:6274"
+      - "6278:6278"
+    environment:
+      # OMNISCI_ROLE: AGGREGATOR
+      OMNISCI_SDS: "sds:6277"
+      OMNISCI_LEAVES: "leaf1:6274 leaf2:6274"
+      OMNISCI_LICENSE: "$OMNISCI_LICENSE"
+    volumes:
+      - v-aggr:/omnisci-storage
+    command: omnisci-starter aggr
+
+  immerse:
+    image: ${OMNISCI_IMAGE}
+    ports:
+      - "6273:6273"
+    environment:
+      # OMNISCI_ROLE: IMMERSE
+      OMNISCI_CORE_URL: "http://aggr:6278"
+    command: omnisci-starter immerse
+
+volumes:
+  v-aggr:
+  v-leaf1:
+  v-leaf2:
+  v-sds:
+
