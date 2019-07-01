@@ -10,6 +10,10 @@ spec:
       name: mapd-leaf1
       protocol: TCP
       targetPort: 6277
+    - port: 6279
+      name: mapd-leaf1-b
+      protocol: TCP
+      targetPort: 6279
   selector:
     app: mapd-leaf1
   clusterIP: None
@@ -32,7 +36,7 @@ spec:
         app: mapd-leaf1
     spec:
       containers:
-      - image: docker.io/omnisci/omnisci-ee-cuda:latest
+      - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
         env:

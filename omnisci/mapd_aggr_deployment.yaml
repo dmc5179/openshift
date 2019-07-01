@@ -36,7 +36,7 @@ spec:
         app: mapd-aggr
     spec:
       containers:
-      - image: docker.io/omnisci/omnisci-ee-cuda:latest
+      - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
         env:
