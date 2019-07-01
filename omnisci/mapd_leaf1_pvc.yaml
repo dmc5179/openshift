@@ -1,11 +1,17 @@
-apiVersion: "v1"
-kind: "PersistentVolumeClaim"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: "mapd-leaf1"
+  name: mapd-pv-leaf1-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: local-ssd
+  labels:
+    app: mapd
 spec:
   accessModes:
-    - "ReadWriteOnce"
+    - ReadWriteOnce
   resources:
     requests:
-      storage: "450Gi"
+      storage: 450Gi
   volumeName: "local-pv-e982b977"
+

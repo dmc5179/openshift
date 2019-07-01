@@ -52,5 +52,5 @@ spec:
       volumes:
       - name: mapd-immerse-persistent-storage
         persistentVolumeClaim:
-          claimName: ssd-mapd-immerse
+          claimName: mapd-pv-immerse-claim
       hostname: mapd-immerse

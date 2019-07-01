@@ -9,9 +9,9 @@ metadata:
     app: mapd
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 450Gi
-  volumeName: "local-pv-10a931f9"
+  volumeName: "local-pv-8f5c0c87"
 

@@ -52,5 +52,5 @@ spec:
       volumes:
       - name: mapd-leaf1-persistent-storage
         persistentVolumeClaim:
-          claimName: ssd-mapd-leaf1
+          claimName: mapd-pv-leaf1-claim
       hostname: omnisci-leaf1
