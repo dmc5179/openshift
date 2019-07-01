@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapd-immerse
+  labels:
+    app: mapd-immerse
+spec:
+  ports:
+    - port: 6273
+      name: mapd-immerse
+      protocol: TCP
+      targetPort: 6273
+  selector:
+    app: mapd-immerse
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mapd-immerse
+  labels:
+    app: mapd-immerse
+spec:
+  selector:
+    matchLabels:
+      app: mapd-immerse
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mapd-immerse
+    spec:
+      containers:
+      - image: docker.io/omnisci/omnisci-ee-cuda:latest
+        imagePullPolicy: IfNotPresent
+        name: omnisci-ee-cuda
+        env:
+        - name: NVIDIA_DRIVER_CAPABILITES
+          value: compute,utility
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        ports:
+        - containerPort: 6273
+          name: mapd-immerse
+        resources:
+        limits:
+          nvidia.com/gpu: 1 # requesting 1 GPU
+        volumeMounts:
+        - name: mapd-immerse-persistent-storage
+          mountPath: /omnisci-storage
+      volumes:
+      - name: mapd-immerse-persistent-storage
+        persistentVolumeClaim:
+          claimName: ssd-mapd-immerse
+      hostname: mapd-immerse
