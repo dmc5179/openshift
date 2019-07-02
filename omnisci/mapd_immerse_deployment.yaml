@@ -35,6 +35,7 @@ spec:
       - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
+        command: ["/scripts/start_immerse.sh"]
         env:
         - name: NVIDIA_DRIVER_CAPABILITES
           value: compute,utility
@@ -49,8 +50,14 @@ spec:
         volumeMounts:
         - name: mapd-immerse-persistent-storage
           mountPath: /omnisci-storage
+        - name: wrapper
+          mountPath: /scripts
       volumes:
       - name: mapd-immerse-persistent-storage
         persistentVolumeClaim:
           claimName: mapd-pv-immerse-claim
+      - name: wrapper
+        configMap:
+          name: mapd-cm-immerse
+          defaultMode: 0755
       hostname: mapd-immerse

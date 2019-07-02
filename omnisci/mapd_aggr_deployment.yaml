@@ -39,6 +39,7 @@ spec:
       - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
+        command: ["/scripts/start_aggr.sh"]
         env:
         - name: NVIDIA_DRIVER_CAPABILITES
           value: compute,utility
@@ -55,8 +56,14 @@ spec:
         volumeMounts:
         - name: mapd-aggr-persistent-storage
           mountPath: /omnisci-storage
+        - name: wrapper
+          mountPath: /scripts
       volumes:
       - name: mapd-aggr-persistent-storage
         persistentVolumeClaim:
           claimName: mapd-pv-aggr-claim
+      - name: wrapper
+        configMap:
+          name: mapd-cm-aggr
+          defaultMode: 0755
       hostname: mapd-aggr

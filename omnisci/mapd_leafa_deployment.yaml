@@ -1,44 +1,41 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mapd-leaf1
+  name: mapd-leafa
   labels:
-    app: mapd-leaf1
+    app: mapd-leafa
 spec:
   ports:
     - port: 6277
-      name: mapd-leaf1
+      name: mapd-leafa
       protocol: TCP
       targetPort: 6277
-    - port: 6279
-      name: mapd-leaf1-b
-      protocol: TCP
-      targetPort: 6279
   selector:
-    app: mapd-leaf1
+    app: mapd-leafa
   clusterIP: None
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: mapd-leaf1
+  name: mapd-leafa
   labels:
-    app: mapd-leaf1
+    app: mapd-leafa
 spec:
   selector:
     matchLabels:
-      app: mapd-leaf1
+      app: mapd-leafa
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: mapd-leaf1
+        app: mapd-leafa
     spec:
       containers:
       - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         imagePullPolicy: IfNotPresent
         name: omnisci-ee-cuda
+        command: ["/scripts/start_leaf.sh"]
         env:
         - name: NVIDIA_DRIVER_CAPABILITES
           value: compute,utility
@@ -46,15 +43,21 @@ spec:
           value: all
         ports:
         - containerPort: 6277
-          name: mapd-leaf1
+          name: mapd-leafa
         resources:
         limits:
           nvidia.com/gpu: 1 # requesting 1 GPU
         volumeMounts:
-        - name: mapd-leaf1-persistent-storage
+        - name: mapd-leafa-persistent-storage
           mountPath: /omnisci-storage
+        - name: wrapper
+          mountPath: /scripts
       volumes:
-      - name: mapd-leaf1-persistent-storage
+      - name: mapd-leafa-persistent-storage
         persistentVolumeClaim:
-          claimName: mapd-pv-leaf1-claim
-      hostname: omnisci-leaf1
+          claimName: mapd-pv-leafa-claim
+      - name: wrapper
+        configMap:
+          name: mapd-cm-leaf
+          defaultMode: 0755
+      hostname: omnisci-leafa

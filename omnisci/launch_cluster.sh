@@ -10,7 +10,7 @@ oc create configmap omnisci-agg-conf-cm --from-file=omnisci-agg.conf
 
 oc create -f mapd_aggr_pvc.yaml
 oc create -f mapd_immerse_pvc.yaml
-oc create -f mapd_leaf1_pvc.yaml
+oc create -f mapd_leaf-a_pvc.yaml
 oc create -f mapd_sds_pvc.yaml
 
 
