@@ -33,6 +33,7 @@ services:
       bash -c "if [ ! -e /omnisci-storage/data ] ; then mkdir -p /omnisci-storage/data ; /omnisci/bin/initdb -f --data /omnisci-storage/data --skip-geo ; fi &&
       echo '[{\"host\": \"sds\", \"port\": 6277, \"role\": \"string\"}]' > /omnisci-storage/cluster.conf &&
       /omnisci/bin/omnisci_server /omnisci-storage/data --config /omnisci-storage/omnisci.conf --string-servers /omnisci-storage/cluster.conf"
+# --strings-servers is not a command line option and causes a segfault
   leaf2:
     image: omnisci/omnisci-ee-cpu:v4.5.0
     volumes:
@@ -52,6 +53,7 @@ services:
       bash -c "if [ ! -e /omnisci-storage/data ] ; then mkdir -p /omnisci-storage/data ; /omnisci/bin/initdb -f --data /omnisci-storage/data --skip-geo ; fi &&
       echo '[{\"host\": \"sds\", \"port\": 6277, \"role\": \"string\"}, {\"host\": \"leaf1\", \"port\": 6274, \"role\": \"dbleaf\"}, {\"host\": \"leaf2\", \"port\": 6274, \"role\": \"dbleaf\"}]' > /omnisci-storage/cluster.conf &&
       /omnisci/bin/omnisci_server /omnisci-storage/data --config /omnisci-storage/omnisci.conf --cluster /omnisci-storage/cluster.conf"
+# --cluster is not a command line option
   immerse:
     image: omnisci/omnisci-ee-cpu:v4.5.0
     ports:
