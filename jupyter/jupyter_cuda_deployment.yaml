@@ -45,6 +45,13 @@ spec:
       labels:
         app: jupyter
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: openshift.com/gpu-accelerator 
+                operator: Exists
       containers:
       - image: quay.io/danclark/jupyter-tensorflow-cuda-notebook:latest-rhel7
         imagePullPolicy: Always
@@ -68,8 +75,6 @@ spec:
           mountPath: /notebooks
         - name: notebook-wrapper
           mountPath: /scripts
-#      nodeSelector:                                    ### ADD
-#        openshift.com/gpu-accelerator: true      ### ADD
       volumes:
       - name: jupyter-persistent-storage
         persistentVolumeClaim:
