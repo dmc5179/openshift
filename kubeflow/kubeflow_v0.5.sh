@@ -48,6 +48,9 @@ export NAMESPACE=kubeflow
 ../scripts/kfctl.sh apply k8s
 
 
+#NOTE!!!!
+# This is manual at the moment. It is very annoying
+# There is probably a way to do with with the oc CLI
 ###################
 # To enable the argo-ui change the argo-ui deployment
 # Then create a route to it once the pod restart
@@ -74,11 +77,13 @@ oc apply -f argo-role.yaml -n kubeflow
 oc adm policy add-scc-to-user privileged -z argo -nkubeflow
 
 # Download the argo client
-wget https://github.com/argoproj/argo/releases/download/v2.3.0/argo-linux-amd64
-
+#wget https://github.com/argoproj/argo/releases/download/v2.3.0/argo-linux-amd64
 
 # Download the minio client
-wget https://dl.min.io/server/minio/release/linux-amd64/minio
+#wget https://dl.min.io/server/minio/release/linux-amd64/minio
+
+# Configure the minio CLI
+#mc config host add minio http://[your-minio-service-URL] minio minio123
 
 # Kubeflow is typically tested used GKE, which is significantly less strict compared to OpenShift
 oc apply -f tfjobs-role.yaml -n kubeflow
@@ -86,5 +91,19 @@ oc apply -f tfjobs-role.yaml -n kubeflow
 # Kubeflow is typically tested used GKE, which is significantly less strict compared to OpenShift
 oc apply -f studyjobs-role.yaml -n kubeflow
 
+# Study job for Katib example
+# oc create -f https://raw.githubusercontent.com/kubeflow/katib/master/examples/random-example.yaml
+
+# If you want to serve ML Models from S3 you need to provide a secret to access AWS
+# oc apply -f aws_access.yaml -n kubeflow
+# Or you can use minio
+# mc cp saved_model.pb minio/serving/mnist/1/saved_model.pb
+
 oc adm policy add-scc-to-user privileged -nkubeflow -z pipeline-runner
+
+# Model DB is not part of the standard kubeflow install but it can be installed using
+# ks generate modeldb modeldb
+# ks apply default -c modeldb
+
+
 
