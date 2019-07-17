@@ -41,7 +41,7 @@ spec:
         name: omnisci-ee-cuda
         command: ["/scripts/start_aggr.sh"]
         env:
-        - name: NVIDIA_DRIVER_CAPABILITES
+        - name: NVIDIA_DRIVER_CAPABILITIES
           value: compute,utility
         - name: NVIDIA_VISIBLE_DEVICES
           value: all

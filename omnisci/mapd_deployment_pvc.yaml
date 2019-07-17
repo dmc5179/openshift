@@ -50,7 +50,7 @@ spec:
       - image: docker.io/omnisci/omnisci-ee-cuda:v4.5.0
         name: omnisci-ee-cuda
         env:
-        - name: NVIDIA_DRIVER_CAPABILITES
+        - name: NVIDIA_DRIVER_CAPABILITIES
           value: compute,utility
         - name: NVIDIA_VISIBLE_DEVICES
           value: all
