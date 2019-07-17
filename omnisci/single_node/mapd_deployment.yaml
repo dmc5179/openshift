@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapd
+  labels:
+    app: mapd
+spec:
+  ports:
+    - port: 6273
+      name: mapd
+      protocol: TCP
+      targetPort: 6273
+  selector:
+    app: mapd
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mapd
+  labels:
+    app: mapd
+spec:
+  selector:
+    matchLabels:
+      app: mapd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mapd
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: openshift.com/gpu-accelerator
+                operator: Exists
+      containers:
+      - image: docker.io/omnisci/omnisci-ee-cuda:latest
+        imagePullPolicy: Always
+        name: omnisci-ee-cuda-latest
+        env:
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: compute,utility,graphics
+        - name: NVIDIA_DRIVER_CAPABILITES
+          value: compute,utility,graphics
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        ports:
+        - containerPort: 6273
+          name: mapd
+        resources:
+        limits:
+          nvidia.com/gpu: 1 # requesting 1 GPU
+        volumeMounts:
+        - name: mapd-persistent-storage
+          mountPath: /omnisci-storage
+      volumes:
+      - name: mapd-persistent-storage
+        persistentVolumeClaim:
+          claimName: mapd-pv-claim
