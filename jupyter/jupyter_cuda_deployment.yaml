@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,19 +14,6 @@ spec:
   selector:
     app: jupyter
   clusterIP: None
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jupyter-pv-claim
-  labels:
-    app: jupyter
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Gi
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
@@ -53,14 +41,14 @@ spec:
               - key: openshift.com/gpu-accelerator 
                 operator: Exists
       containers:
-      - image: quay.io/danclark/jupyter-tensorflow-cuda-notebook:latest-rhel7
+      - image: quay.io/danclark/jupyter-tf-cuda10.0:py36-1.14
         imagePullPolicy: Always
         name: jupyter-tensorflow-cuda-notebook
-        command: ["/scripts/start_jupyter.sh"]
+#        command: ["/scripts/start_jupyter.sh"]
         env:
         - name: PASSWORD
           value: redhat1!
-        - name: NVIDIA_DRIVER_CAPABILITES
+        - name: NVIDIA_DRIVER_CAPABILITIES
           value: compute,utility
         - name: NVIDIA_VISIBLE_DEVICES
           value: all
@@ -73,14 +61,14 @@ spec:
         volumeMounts:
         - name: jupyter-persistent-storage
           mountPath: /notebooks
-        - name: notebook-wrapper
-          mountPath: /scripts
+#        - name: notebook-wrapper
+#          mountPath: /scripts
       volumes:
       - name: jupyter-persistent-storage
         persistentVolumeClaim:
           claimName: jupyter-pv-claim
-      - name: notebook-wrapper
-        configMap:
-          name: jupyter-notebook-cm
-          defaultMode: 0755
+#      - name: notebook-wrapper
+#        configMap:
+#          name: jupyter-notebook-cm
+#          defaultMode: 0755
 
