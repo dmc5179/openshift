@@ -1,0 +1,31 @@
+---
+
+- name: Generate IPSec Certificate for masters
+  hosts: "{{ hosts_to_apply }}"
+  vars:
+    cert_nickname: '10.0.104.62'
+  gather_facts: true
+  tasks:
+
+    #- Cluster CA file: /etc/origin/master/ca.crt
+    #- Host client certificate file: /etc/origin/master/master.server.crt
+    #- Host private key file: /etc/origin/master/master.server.key
+    #
+
+    - name: Get Common Name
+      shell: |
+        openssl x509 -in /etc/origin/master/master.server.crt -subject -noout | sed -n 's/.*CN=\(.*\)/\1/p'
+#      register: cert_nickname
+
+    - name: Get Common Name
+      shell: |
+        openssl pkcs12 -export -in /etc/origin/master/master.server.crt -inkey /etc/origin/master/master.server.key -certfile /etc/origin/master/ca.crt -passout pass: -out /root/certs.p12
+
+    - name: Configure Opportunistic Group
+      template:
+        src: /home/ec2-user/ipsec/playbooks/files/openshift-cluster.conf.j2
+        dest: /etc/ipsec.d/openshift-cluster.conf
+
+
+
+

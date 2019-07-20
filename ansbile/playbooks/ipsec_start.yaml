@@ -1,0 +1,13 @@
+---
+
+- name: Start the IPSec Service
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    - name: Enable IPSec Service
+      systemd:
+        name: ipsec.service
+        state: started
+        enabled: yes
+

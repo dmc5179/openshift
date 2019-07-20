@@ -1,0 +1,27 @@
+---
+
+- name: Configure Clear and Private CIDRs
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    # The CIDR is cluster specific. Needs to be done as a var but manual for now
+    - name: Enable external cluster traffic
+      lineinfile:
+        path: /etc/ipsec.d/policies/clear
+        line: 10.0.104.1/32
+        insertafter: EOF
+
+    - name: Don't IPsec encrypt any incoming ssh
+      lineinfile:
+        path: /etc/ipsec.d/policies/clear
+        line: 0.0.0.0/0  tcp  22  0
+        insertafter: EOF
+
+    # The CIDR is cluster specific. Needs to be done as a var but manual for now
+    - name: Encrypt POD Traffic
+      lineinfile:
+        path: /etc/ipsec.d/policies/private
+        line: 10.0.104.0/24
+        insertafter: EOF
+

@@ -1,0 +1,14 @@
+
+Order of the playbooks
+
+# For all playbooks make sure to set -e hosts_to_apply="<hosts>" using on of the groups from the cluster inventory file
+# like -e hosts_to_apply="nodes"
+
+ipsec_install.yaml          # Install packages on all hosts
+ipsec_firewall.yaml         # Configure firewall on all hosts
+ipsec_certgen_masters.yaml  # Generate certificates only on the masters
+ipsec_certgen_nodes.yaml    # Generate certificates only on the non master nodes. Don't run against the "nodes" group in the inventory as it includes the masters
+ipsec_initialize.yaml       # Initialize IPSec with the certificate and remove it when done
+ipsec_cidr.yaml             # Configure the clear and private CIDR blocks
+ipsec_start.yaml            # Start the IPSec Daemon (Not enabled so it won't start on boot if there is a problem)
+

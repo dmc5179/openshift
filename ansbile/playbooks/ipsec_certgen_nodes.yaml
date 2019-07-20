@@ -1,0 +1,30 @@
+---
+
+- name: Generate IPSec Certificate for client nodes (aka not masters)
+  hosts: "{{ hosts_to_apply }}"
+  vars:
+    cert_nickname: '10.0.104.62'
+  gather_facts: true
+  tasks:
+
+
+    #- Cluster CA file: /etc/origin/node/client-ca.crt
+    #- Host client certificate file: /etc/origin/node/certificates/kubelet-client-current.pem
+    #- Host private key file: /etc/origin/node/certificates/kubelet-client-current.pem
+    #
+    #Note: the kubelet-client-current.pem file contains both the certificate en private key file.
+
+    - name: Get Common Name
+      shell: |
+        openssl x509 -in /etc/origin/node/certificates/kubelet-client-current.pem -subject -noout | sed -n 's/.*CN=\(.*\)/\1/p'
+#      register: cert_nickname
+
+    - name: Get Common Name
+      shell: |
+        openssl pkcs12 -export -in /etc/origin/node/certificates/kubelet-client-current.pem -inkey /etc/origin/node/certificates/kubelet-client-current.pem -certfile /etc/origin/node/client-ca.crt -passout pass: -out /root/certs.p12
+
+    - name: Configure Opportunistic Group
+      template:
+        src: /home/ec2-user/ipsec/playbooks/files/openshift-cluster.conf.j2
+        dest: /etc/ipsec.d/openshift-cluster.conf
+

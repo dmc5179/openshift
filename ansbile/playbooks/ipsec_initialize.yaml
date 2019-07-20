@@ -1,0 +1,18 @@
+---
+
+- name: Initialize IPSec with certificates
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    - name: Initialize IPSec nss
+      shell: ipsec initnss
+
+    - name: Import Certificate
+      shell: pk12util -i /root/certs.p12 -d sql:/etc/ipsec.d -W ""
+
+    - name: Remove Certificate
+      file:
+        path: /root/certs.p12
+        state: absent
+

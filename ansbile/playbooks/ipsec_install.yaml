@@ -1,0 +1,17 @@
+---
+
+- name: Install required packages for IPSec on OCP
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    - name: Check for supported version
+      fail:
+        msg: "Please use a supported OS, detected: {{ ansible_distribution }}"
+      when: ansible_distribution != "RedHat"
+
+    - name: Install libreswan
+      yum:
+        name: libreswan
+        state: latest
+

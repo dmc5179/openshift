@@ -1,0 +1,122 @@
+---
+
+# Note: The iptables module modifies the running ruleset
+# It does not save the state. On reload or restart or reboot
+# IPTables will have what it had before this playbook was run
+# It is beyond the scope of this playbook to save the state of the firewall
+
+- name: Configure the Firewall on all Hosts for IPSec
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    - name: Allow port 50 UDP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        destination_port: 50
+        in_interface: eth0
+
+    - name: Allow port 50 TCP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: tcp
+        jump: ACCEPT
+        action: append
+        destination_port: 50
+        in_interface: eth0
+
+    - name: Allow port 50 UDP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        source_port: 50
+        in_interface: eth0
+
+    - name: Allow port 50 TCP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: tcp
+        jump: ACCEPT
+        action: append
+        source_port: 50
+        in_interface: eth0
+
+    - name: Allow port 51 UDP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        destination_port: 51
+        in_interface: eth0
+
+    - name: Allow port 51 TCP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        destination_port: 51
+        in_interface: eth0
+
+    - name: Allow port 51 UDP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        source_port: 51
+        in_interface: eth0
+
+    - name: Allow port 51 TCP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        source_port: 51
+        in_interface: eth0
+
+    - name: Allow port 500 UDP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        destination_port: 500
+        in_interface: eth0
+
+    - name: Allow port 500 UDP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        source_port: 500
+        in_interface: eth0
+
+#IPsec also uses UDP port 4500 for NAT traversal, though this should not apply to normal cluster deployments.
+    - name: Allow port 4500 UDP Out
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        destination_port: 4500
+        in_interface: eth0
+
+    - name: Allow port 4500 UDP In
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        protocol: udp
+        jump: ACCEPT
+        action: append
+        source_port: 4500
+        in_interface: eth0
+
+
