@@ -1,0 +1,56 @@
+---
+
+# Note: The iptables module modifies the running ruleset
+# It does not save the state. On reload or restart or reboot
+# IPTables will have what it had before this playbook was run
+# It is beyond the scope of this playbook to save the state of the firewall
+
+- name: Configure the Firewall on all Hosts for IPSec
+  hosts: "{{ hosts_to_apply }}"
+  gather_facts: true
+  tasks:
+
+    - name: Allow port 50 UDP
+      firewalld:
+        port: 50/udp
+        permanent: no
+        immediate: yes
+        state: enabled
+
+    - name: Allow port 50 TCP
+      firewalld:
+        port: 50/tcp
+        permanent: no
+        immediate: yes
+        state: enabled
+
+    - name: Allow port 51 UDP 
+      firewalld:
+        port: 51/udp
+        permanent: no
+        immediate: yes
+        state: enabled
+
+    - name: Allow port 51 TCP
+      firewalld:
+        port: 51/tcp
+        permanent: no
+        immediate: yes
+        state: enabled
+
+    - name: Allow port 500 UDP
+      firewalld:
+        port: 500/udp
+        permanent: no
+        immediate: yes
+        state: enabled
+
+#IPsec also uses UDP port 4500 for NAT traversal, though this should not apply to normal cluster deployments.
+
+    - name: Allow port 4500 UDP
+      firewalld:
+        port: 4500/udp
+        permanent: no
+        immediate: yes
+        state: enabled
+
