@@ -10,6 +10,7 @@ cd linux-amd64
 
 oc new-project ${NAMESPACE}
 oc project ${NAMESPACE}
+oc adm policy add-role-to-user admin -z tiller
 oc adm policy add-scc-to-group anyuid -z default
 
 # rbac-config defaults to using the kube-system namespace so we have to use sed first
