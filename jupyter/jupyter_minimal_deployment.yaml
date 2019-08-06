@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter
+  labels:
+    app: jupyter
+spec:
+  ports:
+    - port: 8888
+      name: jupyter
+      protocol: TCP
+      targetPort: 8888
+  selector:
+    app: jupyter
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: jupyter
+  labels:
+    app: jupyter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jupyter
+    spec:
+      containers:
+      - image: quay.io/danclark/jupyter-minimal-notebook:latest-rhel7
+        imagePullPolicy: Always
+        name: jupyter-minimal-notebook
+        env:
+        - name: PASSWORD
+          value: redhat1!
+        ports:
+        - containerPort: 8888
+          name: jupyter
+        resources:
+        volumeMounts:
+        - name: jupyter-persistent-storage
+          mountPath: /notebooks
+      volumes:
+      - name: jupyter-persistent-storage
+        persistentVolumeClaim:
+          claimName: jupyter-pv-claim
+
