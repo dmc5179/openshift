@@ -5,14 +5,20 @@ metadata:
  name: ais-cluster
 spec:
  kafka:
-   replicas: 3
+   replicas: 1
    listeners:
-     external:
-       type: route
+      external:
+        type: route
+      plain: {}
+      tls: {}
+#    config:
+#      message.max.bytes: 5000000
+#      max.request.size: 5000000
+#      replica.fetch.max.bytes: 5000000
    storage:
      type: ephemeral
  zookeeper:
-   replicas: 3
+   replicas: 1
    storage:
      type: ephemeral
  entityOperator:
