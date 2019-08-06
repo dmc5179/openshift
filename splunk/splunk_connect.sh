@@ -1,4 +1,9 @@
 #!/bin/bash
+# From blog post here:
+#
+# https://blog.openshift.com/splunk-connect-for-openshift-logging-part/
+#
+
 NAMESPACE=splunk-connect
 
 
