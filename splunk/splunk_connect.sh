@@ -4,7 +4,7 @@
 # https://blog.openshift.com/splunk-connect-for-openshift-logging-part/
 #
 
-NAMESPACE=splunk-connect
+NAMESPACE=splunk
 
 
 ########################
@@ -29,7 +29,7 @@ sed -i "s/kube-system/${NAMESPACE}/g" ./rbac-config.yaml
 oc create -f ./rbac-config.yaml
 helm init --service-account tiller
 
-helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=splunk-connect
+helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=${NAMESPACE}
 
 ##########################################
 # Download splunk connect helm chart
@@ -37,7 +37,7 @@ helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--stor
 wget https://github.com/splunk/splunk-connect-for-kubernetes/releases/download/1.1.0/splunk-kubernetes-logging-1.1.0.tgz
 tar -xzf splunk-kubernetes-logging-1.1.0.tgz
 rm -f splunk-kubernetes-logging-1.1.0.tgz
-cd splunk-kubernetes-logging-1.1.0
+cd splunk-kubernetes-logging
 
 #######################
 # Splunk OCP logging
@@ -49,7 +49,7 @@ oc create sa splunk-kubernetes-logging
 oc adm policy add-scc-to-user privileged -z splunk-kubernetes-logging
 
 # Install Helm package
-helm install --tiller-namespace=splunk-connect --name splunk-kubernetes-logging -f logging-value.yml splunk-kubernetes-logging-1.1.0.tgz
+helm install --tiller-namespace=${NAMESPACE} --name splunk-kubernetes-logging -f logging-value.yml splunk-kubernetes-logging-1.1.0.tgz
 
 # There probably needs to be a sleep in here since the patch below is operating on things
 # being created by the help chart above
