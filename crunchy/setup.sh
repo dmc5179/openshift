@@ -36,7 +36,7 @@ source ~/.bashrc
 # This will lock up your terminal unless you use &
 export OPERATOR_POD_NAME=$(oc get pods -n pgo | awk '{print $1}' | tail -1)
 
-oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 8443:8443
+oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 15432:5432
 
 # Unless you configure the operator to manage other namespaces
 # You have to build your cluster in the same pgo namespace
