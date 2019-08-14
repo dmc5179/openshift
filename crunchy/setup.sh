@@ -49,11 +49,17 @@ source ~/.bashrc
 # This will lock up your terminal unless you use &
 export OPERATOR_POD_NAME=$(oc get pods -n pgo | awk '{print $1}' | tail -1)
 
-#oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 15432:5432
+# This port forward is to use the pgo command and do things like create a cluster
+#oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 8443:8443
 
 # Unless you configure the operator to manage other namespaces
 # You have to build your cluster in the same pgo namespace
-#pgo create cluster ${CLUSTER_NAME} --replica-count=1 -n pg
+#pgo create cluster ${CLUSTER_NAME} --replica-count=1 -n ${OPERATOR_NAMESPACE}
+
+
+# This port forward is to use the psql command to talk to the database itself
+#oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 15432:5432
+# psql -h 127.0.0.1 -p 15432 .........
 
 sleep 5
 oc expose svc/${CLUSTER_NAME}
