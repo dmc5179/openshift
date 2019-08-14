@@ -2,11 +2,14 @@
 set -x
 #set -e
 
+#VERSION=fuse-731003-redhat-00003
+
 #BASEURL=https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000099-redhat-5
 BASEURL=https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-730065-redhat-00002
+#BASEURL=https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.${VERSION}
 
 # Install the Fuse on OpenShift image streams
-oc create -n openshift -f ${BASEURL}/fis-image-streams.json
+####oc replace -n openshift -f ${BASEURL}/fis-image-streams.json
 
 for template in eap-camel-amq-template.json \
  eap-camel-cdi-template.json \
@@ -31,7 +34,7 @@ for template in eap-camel-amq-template.json \
  do
 #  oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000099-redhat-5/quickstarts/${template}
 
-  oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-730065-redhat-00002/quickstarts/${template}
+  oc replace -n openshift -f ${BASEURL}/quickstarts/${template}
 
  done
 
@@ -39,8 +42,8 @@ for template in eap-camel-amq-template.json \
 #oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000099-redhat-5/fis-console-cluster-template.json
 #oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000099-redhat-5/fis-console-namespace-template.json
 
-oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-730065-redhat-00002/fis-console-cluster-template.json
-oc create -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-730065-redhat-00002/fis-console-namespace-template.json
+oc replace -n openshift -f ${BASEURL}/fis-console-cluster-template.json
+oc replace -n openshift -f ${BASEURL}/fis-console-namespace-template.json
 
 
 
