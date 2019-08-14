@@ -1,7 +1,13 @@
 #!/bin/bash
+set -x
 
 export OPERATOR_NAMESPACE=pgo
 export CLUSTER_NAME=ais-pg-cluster
+
+export INSTALLER_DIR=$PWD
+
+oc new-project pgo
+oc project pgo
 
 # Add this to the inventory vars area
 #ansible_ssh_private_key_file=/home/ec2-user/.ssh/dan-redhatgov-io.pem
@@ -11,9 +17,16 @@ export CLUSTER_NAME=ais-pg-cluster
 #ansible_become_method=sudo
 #ansible_become_user=root
 
+if [ ! -d postgres-operator ];
+then
+  git clone https://github.com/CrunchyData/postgres-operator.git
+else
+  echo "operator already checked out"
+fi
 
-ansible-playbook -i inventory --tags=install  main.yml
+cd ./postgres-operator/ansible
 
+ansible-playbook -i "${INSTALLER_DIR}/inventory" --tags=install  main.yml
 
 # OpenShift
 oc get deployments -n ${OPERATOR_NAMESPACE}
@@ -36,11 +49,12 @@ source ~/.bashrc
 # This will lock up your terminal unless you use &
 export OPERATOR_POD_NAME=$(oc get pods -n pgo | awk '{print $1}' | tail -1)
 
-oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 15432:5432
+#oc port-forward "${OPERATOR_POD_NAME}" -n "${OPERATOR_NAMESPACE}" 15432:5432
 
 # Unless you configure the operator to manage other namespaces
 # You have to build your cluster in the same pgo namespace
 #pgo create cluster ${CLUSTER_NAME} --replica-count=1 -n pg
 
+sleep 5
 oc expose svc/${CLUSTER_NAME}
 
