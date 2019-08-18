@@ -1,7 +1,31 @@
 ---
 - name: Create and attach EBS volume to OmniSci host
-  hosts: "{{ hosts_to_apply }}"
-  user: root
-  roles:
-    - ebs
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+
+    -name: Create new volume using SSD storage
+     local_action:
+       module: ec2_vol
+       instance: "{{ omnisci_instance_id }}"
+       volume_size: 500
+       volume_type: gp2
+       device_name: /dev/xvdg
+
+    - name: Create GPT label
+      parted:
+        device: /dev/xvdg
+        label: gpt
+
+    - name: Create a new primary partition with a size of 1GiB
+      parted:
+        device: /dev/xvdg
+        number: 1
+        state: present
+
+    - name: Create a xfs filesystem on /dev/xvdg1
+      filesystem:
+        fstype: xfs
+        dev: /dev/xvdg1
+
 
