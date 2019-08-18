@@ -1,0 +1,7 @@
+---
+- name: Create and attach EBS volume to OmniSci host
+  hosts: "{{ hosts_to_apply }}"
+  user: root
+  roles:
+    - ebs
+

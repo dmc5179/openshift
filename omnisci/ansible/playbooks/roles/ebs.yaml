@@ -1,0 +1,8 @@
+---
+
+# Create new volume using SSD storage
+- ec2_vol:
+    instance: "{{ omnisci_instance_id }}"
+    volume_size: 500
+    volume_type: gp2
+    device_name: /dev/xvdf
