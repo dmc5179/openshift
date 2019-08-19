@@ -1,0 +1,21 @@
+---
+- name: Create and attach EBS volume to OmniSci host
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+
+    - name: Create new volume using SSD storage
+      ec2_vol:
+        instance: "{{ omnisci_instance_id }}"
+        volume_size: "500"
+        tags: {'name':'storage for omnisci'}
+        volume_type: gp2
+        device_name: /dev/xvdg
+        region: "{{ region }}"
+        zone: "{{ az }}"
+
+    - name: Pausing to wait for volume to create and attach
+      pause:
+        seconds: 30
+
+

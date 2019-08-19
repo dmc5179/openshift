@@ -1,16 +1,7 @@
 ---
 - name: Create and attach EBS volume to OmniSci host
-  hosts: 127.0.0.1
-  connection: local
+  hosts: "{{ hosts_to_apply }}"
   tasks:
-
-    -name: Create new volume using SSD storage
-     local_action:
-       module: ec2_vol
-       instance: "{{ omnisci_instance_id }}"
-       volume_size: 500
-       volume_type: gp2
-       device_name: /dev/xvdg
 
     - name: Create GPT label
       parted:
