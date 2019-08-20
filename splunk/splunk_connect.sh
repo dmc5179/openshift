@@ -4,7 +4,7 @@
 # https://blog.openshift.com/splunk-connect-for-openshift-logging-part/
 #
 
-NAMESPACE=splunk
+NAMESPACE=splunk-connect
 
 
 ########################
@@ -18,18 +18,19 @@ wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.1-linux-amd64.tar
 tar -xzf helm-v2.14.1-linux-amd64.tar.gz
 cd linux-amd64
 
-oc new-project ${NAMESPACE}
+oc adm new-project ${NAMESPACE} --node-selector=""
 oc project ${NAMESPACE}
-oc adm policy add-role-to-user admin -z tiller
-oc adm policy add-scc-to-group anyuid -z default
+#oc create sa tiller
+#oc adm policy add-role-to-user admin -z tiller
+oc adm policy add-scc-to-user anyuid -z default
 
 # rbac-config defaults to using the kube-system namespace so we have to use sed first
 wget  https://gitlab.com/charts/gitlab/raw/master/doc/installation/examples/rbac-config.yaml
 sed -i "s/kube-system/${NAMESPACE}/g" ./rbac-config.yaml
 oc create -f ./rbac-config.yaml
-helm init --service-account tiller
+#helm init --service-account tiller
 
-helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=${NAMESPACE}
+./helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=${NAMESPACE}
 
 ##########################################
 # Download splunk connect helm chart
