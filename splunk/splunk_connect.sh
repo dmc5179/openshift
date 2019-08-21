@@ -4,8 +4,17 @@
 # https://blog.openshift.com/splunk-connect-for-openshift-logging-part/
 #
 
-NAMESPACE=splunk-connect
+export NAMESPACE=splunk-connect
 
+# Create the project
+oc adm new-project ${NAMESPACE} --node-selector=""
+oc project ${NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z default
+
+# rbac-config defaults to using the kube-system namespace so we have to use sed first
+wget  https://gitlab.com/charts/gitlab/raw/master/doc/installation/examples/rbac-config.yaml
+sed -i "s/kube-system/${NAMESPACE}/g" ./rbac-config.yaml
+oc create -f ./rbac-config.yaml
 
 ########################
 # Install helm in a custom config
@@ -16,29 +25,17 @@ NAMESPACE=splunk-connect
 #cd helm
 wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.1-linux-amd64.tar.gz
 tar -xzf helm-v2.14.1-linux-amd64.tar.gz
-cd linux-amd64
-
-oc adm new-project ${NAMESPACE} --node-selector=""
-oc project ${NAMESPACE}
-#oc create sa tiller
-#oc adm policy add-role-to-user admin -z tiller
-oc adm policy add-scc-to-user anyuid -z default
-
-# rbac-config defaults to using the kube-system namespace so we have to use sed first
-wget  https://gitlab.com/charts/gitlab/raw/master/doc/installation/examples/rbac-config.yaml
-sed -i "s/kube-system/${NAMESPACE}/g" ./rbac-config.yaml
-oc create -f ./rbac-config.yaml
-#helm init --service-account tiller
+pushd linux-amd64
 
 ./helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=${NAMESPACE}
 
-cd ../
+popd
 
 ##########################################
 # Download splunk connect helm chart
 
 wget https://github.com/splunk/splunk-connect-for-kubernetes/releases/download/1.1.0/splunk-kubernetes-logging-1.1.0.tgz
-#tar -xzf splunk-kubernetes-logging-1.1.0.tgz
+tar -xzf splunk-kubernetes-logging-1.1.0.tgz
 #rm -f splunk-kubernetes-logging-1.1.0.tgz
 #cd splunk-kubernetes-logging
 
@@ -108,8 +105,8 @@ oc create route edge --service=ext
 # Update the extensions section of the webconsole-config configmap based on your settings.
 # extensions:
 #      properties:
-#        splunkURL: "https://splunk.openlab.red"
-#        splunkQueryPrefix: "/app/search/search?q=search%20"
+#        splunkURL: "http://ec2-54-175-28-109.compute-1.amazonaws.com:8000"
+#        splunkQueryPrefix: "/en-US/app/search/search?q=search%20"
 #        splunkApplicationIndex: 'ocp_logging'
 #        splunkSystemIndex: 'ocp_system'
 #        splunkSystemNamespacePattern: '^(openshift|kube|splunk|istio|default)\-?.*'
