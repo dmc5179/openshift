@@ -32,13 +32,15 @@ oc create -f ./rbac-config.yaml
 
 ./helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret,--listen=localhost:44134}' --service-account=tiller --tiller-namespace=${NAMESPACE}
 
+cd ../
+
 ##########################################
 # Download splunk connect helm chart
 
 wget https://github.com/splunk/splunk-connect-for-kubernetes/releases/download/1.1.0/splunk-kubernetes-logging-1.1.0.tgz
-tar -xzf splunk-kubernetes-logging-1.1.0.tgz
-rm -f splunk-kubernetes-logging-1.1.0.tgz
-cd splunk-kubernetes-logging
+#tar -xzf splunk-kubernetes-logging-1.1.0.tgz
+#rm -f splunk-kubernetes-logging-1.1.0.tgz
+#cd splunk-kubernetes-logging
 
 #######################
 # Splunk OCP logging
@@ -50,7 +52,8 @@ oc create sa splunk-kubernetes-logging
 oc adm policy add-scc-to-user privileged -z splunk-kubernetes-logging
 
 # Install Helm package
-helm install --tiller-namespace=${NAMESPACE} --name splunk-kubernetes-logging -f logging-value.yml splunk-kubernetes-logging-1.1.0.tgz
+#./linux-amd64/helm install --tiller-namespace=${NAMESPACE} --name splunk-kubernetes-logging -f logging-value.yml splunk-kubernetes-logging-1.1.0.tgz
+./linux-amd64/helm install --tiller-namespace=${NAMESPACE} --name splunk-kubernetes-logging -f values.yaml ./splunk-kubernetes-logging
 
 # There probably needs to be a sleep in here since the patch below is operating on things
 # being created by the help chart above
@@ -61,7 +64,7 @@ oc patch ds splunk-kubernetes-logging -p '{
          "spec":{
             "template":{
                "spec":{
-                  "serviceAccountName": "splunk-kubernetes-logging"
+                  "serviceAccountName": "splunk-kubernetes-logging",
                   "containers":[
                      {
                         "name":"splunk-fluentd-k8s-logs",
