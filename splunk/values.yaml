@@ -36,13 +36,13 @@ splunk:
     # host is required and should be provided by user
     host: 
     # port to HEC, optional, default 8088
-    port: 8089
+    port: 8088
     # token is required and should be provided by user
     token: 
     # protocol has two options: "http" and "https", default is "https"
     protocol: https
     # indexName tells which index to use, this is optional. If it's not present, will use the default one configured in HEC.
-    indexName:
+    indexName: ocp_logging
     # insecureSSL is a boolean, it indicates should it allow inscure SSL connection (when protocol is "https"). Default is false.
     insecureSSL: true
     # The PEM-format CA certificate for this client.

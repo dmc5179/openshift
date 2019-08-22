@@ -53,10 +53,11 @@ oc adm policy add-scc-to-user privileged -z splunk-kubernetes-logging
 ./linux-amd64/helm install --tiller-namespace=${NAMESPACE} --name splunk-kubernetes-logging -f values.yaml ./splunk-kubernetes-logging
 
 # There probably needs to be a sleep in here since the patch below is operating on things
-# being created by the help chart above
+# being created by the helm chart above
 sleep 30
 
 # Patch to add privileged=true securityContext and service account splunk-kubernetes-logging.
+# There is a typo in the blog post this comes from
 oc patch ds splunk-kubernetes-logging -p '{
          "spec":{
             "template":{

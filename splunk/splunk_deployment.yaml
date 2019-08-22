@@ -55,30 +55,44 @@ spec:
         name: splunk-enterprise
         env:
         - name: SPLUNK_START_ARGS
-          value: "--accept-license"
+          value: "--accept-license --answer-yes"
         - name: SPLUNK_PASSWORD
           value: "redhat1!"
         ports:
+        #Splunk Web interface
         - containerPort: 8000
           name: splunk-web
+        #
         - containerPort: 8089
           name: splunk-api
-        volumeMounts:
-        - name: splunk-etc
-          mountPath: /opt/splunk/etc
-        - name: splunk-var
-          mountPath: /opt/splunk/var
+        #HTTP Event Collector / Splunk Services
+        - containerPort: 8088
+          name: splunk-httpec
+        # Application Key Value Store
+        - containerPort: 8191
+          name: splunk-kvs
+        # Splunk receiving Port (not used by default) typically used by the Splunk Universal Forwarder
+        - containerPort: 9997
+          name: splunk-uni-for
+        # Network Input (not used by default) typically used to collect syslog TCP data
+        - containerPort: 1514
+          name: splunk-netin
+#        volumeMounts:
+#        - name: splunk-etc
+#          mountPath: /opt/splunk/etc
+#        - name: splunk-var
+#          mountPath: /opt/splunk/var
 #        - name: notebook-wrapper
 #          mountPath: /scripts
-      volumes:
-      - name: splunk-etc
-        persistentVolumeClaim:
-          claimName: splunk-etc-pv
-      - name: splunk-var
-        persistentVolumeClaim:
-          claimName: splunk-var-pv
+#      volumes:
+#      - name: splunk-etc
+#        persistentVolumeClaim:
+#          claimName: splunk-etc-pv
+#      - name: splunk-var
+#        persistentVolumeClaim:
+#          claimName: splunk-var-pv
 #      - name: notebook-wrapper
 #        configMap:
 #          name: splunk-notebook-cm
 #          defaultMode: 0755
-
+      hostname: splunkenterprise
