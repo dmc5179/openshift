@@ -3,6 +3,8 @@
 #
 # https://blog.openshift.com/splunk-connect-for-openshift-logging-part/
 #
+# When you go to splunk search page use
+# index="ocp_logging"
 
 export NAMESPACE=splunk-connect
 
