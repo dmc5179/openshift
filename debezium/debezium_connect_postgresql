@@ -7,6 +7,7 @@ oc exec -i -c kafka ais-cluster-kafka-0 -- curl -X POST \
   "name": "ais-connector",
   "config": {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "plugin.name": "pgoutput",
     "database.hostname": "ais-pg-cluster.pgo.svc.cluster.local",
     "database.port": "5432",
     "database.user": "testuser",
