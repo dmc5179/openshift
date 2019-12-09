@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make sure to install Ksonnet first
+# It will be required later
+
 NAMESPACE=kubeflow
 
 oc new-project ${NAMESPACE}
@@ -43,8 +46,8 @@ cd ${KUBEFLOW_SRC}
 curl https://raw.githubusercontent.com/kubeflow/kubeflow/${KUBEFLOW_TAG}/scripts/download.sh | bash
 export KFAPP=openshift
 scripts/kfctl.sh init ${KFAPP} --platform none
+pushd openshift
 ../scripts/kfctl.sh generate k8s
-export NAMESPACE=kubeflow
 ../scripts/kfctl.sh apply k8s
 
 
